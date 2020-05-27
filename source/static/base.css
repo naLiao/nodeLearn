@@ -1,0 +1,12 @@
+div {
+    color: yellow;
+    font-size: 40px;
+}
+
+p {
+    font-size: 20px;
+    color:green;
+}
+li {
+    list-style: none;
+}

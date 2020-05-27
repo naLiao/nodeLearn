@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>播放页</title>
+    <link rel="stylesheet" href="./static/base.css">
+</head>
+
+<body>
+    <div>播放页标题</div>
+    <p>内容1</p>
+    <p>内容2</p>
+    <p>内容3</p>
+    <p>内容4</p>
+    <div id="comment">精选留言</div>
+</body>
+
+<script>
+    const commentBox = document.getElementById('comment')
+    fetch('./api?query={comment{id, name, content, praiseNum}}')
+        .then(res => res.json())
+        .then(res => {
+            commentBox.innerHTML = res.data.comment.map(item => {
+                return `
+                    <li>
+                        <div>${item.name}</div>
+                        <div>${item.content}</div>
+                        <div class="praise-button" id=${item.id}>${item.praiseNum}</div>
+                    </li>
+                `
+            })
+
+            const praiseButtons = commentBox.getElementsByClassName('praise-button')
+            Array.from(praiseButtons).forEach(button => {
+                button.addEventListener('click', (ev) => {
+                    let id = Number(ev.target.getAttribute('id'))
+                    fetch('./api',
+
+                        {
+                            method: 'POST',
+                            headers: {
+                                'content-type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                "query": `mutation { praise(id: ${id})}`
+                            })
+                        }
+                    )
+                        .then(res => res.json())
+                        .then(res => {
+                            button.innerHTML = res.data.praise
+                        })
+                })
+            })
+        })
+</script>
+
+</html>
